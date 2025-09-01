@@ -4,17 +4,29 @@ import com.tienda.model.Producto;
 import java.util.List;
 
 public class EliminarProductoCommand implements Command {
-    private List<Producto> carrito;
+    private List<Producto> productos;
     private Producto producto;
-
-    public EliminarProductoCommand(List<Producto> carrito, Producto producto) {
-        this.carrito = carrito;
+    private boolean ejecutado = false;
+    private int indice;
+    
+    public EliminarProductoCommand(List<Producto> productos, Producto producto) {
+        this.productos = productos;
         this.producto = producto;
     }
-
+    
     @Override
     public void ejecutar() {
-        carrito.remove(producto);
-        System.out.println("❌ Producto eliminado: " + producto.getNombre());
+        if (productos.contains(producto)) {
+            indice = productos.indexOf(producto);
+            productos.remove(producto);
+            ejecutado = true;
+        }
+    }
+    
+    @Override
+    public void deshacer() {
+        if (ejecutado) {
+            productos.add(indice, producto);
+        }
     }
 }

@@ -6,6 +6,7 @@ import com.tienda.view.MenuView;
 import com.tienda.discount.*;
 import com.tienda.command.*;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,9 +19,9 @@ public class TiendaController {
 
     public TiendaController() {
         this.productos = Arrays.asList(
-                new Producto("Polera Básica", "poleras", 10000),
-                new Producto("Cinturón Cuero", "accesorios", 8000),
-                new Producto("Pantalón Jeans", "pantalones", 20000)
+                new Producto("Polera Básica", "poleras", new BigDecimal("10000")),
+                new Producto("Cinturón Cuero", "accesorios", new BigDecimal("8000")),
+                new Producto("Pantalón Jeans", "pantalones", new BigDecimal("20000"))
         );
         this.carrito = new Carrito();
         this.view = new MenuView();
@@ -56,29 +57,37 @@ public class TiendaController {
     }
 
     private void aplicarDescuento10() {
+        view.mostrarProductos(productos);
         int index = view.leerNumero("Selecciona el producto (número): ") - 1;
         if (index >= 0 && index < productos.size()) {
             Producto p = productos.get(index);
             Component conDescuento10 = new Descuento10(p);
-            double total = dm.calculateTotal(conDescuento10, p.getPrecio());
-            view.mostrarMensaje("Precio con 10% de descuento: $" + total);
+            BigDecimal precioOriginal = p.getPrecio();
+            BigDecimal total = dm.calculateTotal(conDescuento10, precioOriginal);
+            
+            view.mostrarComparativaPrecios(precioOriginal, total, "10% de descuento");
         }
     }
 
     private void aplicarDescuentoPoleras() {
+        view.mostrarProductos(productos);
         int index = view.leerNumero("Selecciona el producto (número): ") - 1;
         if (index >= 0 && index < productos.size()) {
             Producto p = productos.get(index);
             Component base = precioBase -> precioBase;
-            Component conDescuentoPolera = new DescuentoPoleras20(base, p);
-            double total = dm.calculateTotal(conDescuentoPolera, p.getPrecio());
-            view.mostrarMensaje("Precio con 20% de descuento para poleras: $" + total);
+            Component conDescuentoPolera = new DescuentoPoleras20(base, p.getCategoria());
+            BigDecimal precioOriginal = p.getPrecio();
+            BigDecimal total = dm.calculateTotal(conDescuentoPolera, precioOriginal);
+            
+            view.mostrarComparativaPrecios(precioOriginal, total, "20% de descuento para poleras");
         }
     }
 
     private void gestionarCarrito() {
+        view.mostrarProductos(productos);
         int cmdOpcion = view.leerNumero("1. Agregar producto\n2. Eliminar producto\nOpción: ");
         int index = view.leerNumero("Selecciona el producto (número): ") - 1;
+        
         if (index >= 0 && index < productos.size()) {
             Producto producto = productos.get(index);
             Command comando = (cmdOpcion == 1) 
@@ -88,10 +97,11 @@ public class TiendaController {
             invoker.addCommand(comando);
             invoker.ejecutarComandos();
 
-            view.mostrarMensaje("Carrito actual:");
+            view.mostrarMensaje("Carrito actual (" + carrito.getCantidadProductos() + " productos):");
             for (Producto p : carrito.getProductos()) {
-                view.mostrarMensaje("- " + p.getNombre() + " $" + p.getPrecio());
+                view.mostrarMensaje("- " + p.getNombre() + " " + view.formatearPrecio(p.getPrecio()));
             }
+            view.mostrarMensaje("Total: " + view.formatearPrecio(carrito.calcularTotal()));
         }
     }
 }

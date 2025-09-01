@@ -1,28 +1,42 @@
 package com.tienda.model;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Carrito {
     private List<Producto> productos;
-
+    
     public Carrito() {
         this.productos = new ArrayList<>();
     }
-
-    public void agregarProducto(Producto p) {
-        productos.add(p);
-    }
-
-    public void eliminarProducto(Producto p) {
-        productos.remove(p);
-    }
-
+    
     public List<Producto> getProductos() {
-        return productos;
+        return Collections.unmodifiableList(productos);
     }
-
-    public double calcularTotal() {
-        return productos.stream().mapToDouble(Producto::getPrecio).sum();
+    
+    public void agregarProducto(Producto producto) {
+        productos.add(producto);
+    }
+    
+    public void eliminarProducto(Producto producto) {
+        productos.remove(producto);
+    }
+    
+    public BigDecimal calcularTotal() {
+        BigDecimal total = BigDecimal.ZERO;
+        for (Producto producto : productos) {
+            total = total.add(producto.getPrecio());
+        }
+        return total;
+    }
+    
+    public void vaciarCarrito() {
+        productos.clear();
+    }
+    
+    public int getCantidadProductos() {
+        return productos.size();
     }
 }

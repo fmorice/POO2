@@ -1,5 +1,7 @@
 package com.tienda.discount;
 
+import java.math.BigDecimal;
+
 public interface Component {
-    double aplicarDescuento(double precioBase);
+    BigDecimal aplicarDescuento(BigDecimal precioBase);
 }

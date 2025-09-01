@@ -1,20 +1,24 @@
 package com.tienda.discount;
 
-import com.tienda.model.Producto;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class DescuentoPoleras20 extends Decorator {
-    private Producto producto;
-
-    public DescuentoPoleras20(Component componente, Producto producto) {
+    private String categoria; 
+    
+    public DescuentoPoleras20(Component componente, String categoria) {
         super(componente);
-        this.producto = producto;
+        this.categoria = categoria;
     }
 
     @Override
-    public double aplicarDescuento(double precioBase) {
-        double precio = super.aplicarDescuento(precioBase);
-        if ("poleras".equalsIgnoreCase(producto.getCategoria())) {
-            return precio * 0.80; // 20% menos
+    public BigDecimal aplicarDescuento(BigDecimal precioBase) {
+        BigDecimal precio = super.aplicarDescuento(precioBase);
+        
+        // Aplicar 20% de descuento solo para poleras
+        if ("poleras".equalsIgnoreCase(categoria)) {
+            return precio.multiply(new BigDecimal("0.80"))
+                        .setScale(0, RoundingMode.HALF_UP);
         }
         return precio;
     }

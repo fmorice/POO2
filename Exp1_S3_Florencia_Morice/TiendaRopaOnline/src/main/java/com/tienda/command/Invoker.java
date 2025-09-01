@@ -1,19 +1,25 @@
 package com.tienda.command;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Stack;
 
 public class Invoker {
-    private List<Command> comandos = new ArrayList<>();
-
-    public void addCommand(Command command) {
-        comandos.add(command);
+    private Stack<Command> comandosEjecutados = new Stack<>();
+    
+    public void addCommand(Command comando) {
+        comandosEjecutados.push(comando);
     }
-
+    
     public void ejecutarComandos() {
-        for (Command c : comandos) {
-            c.ejecutar();
+        while (!comandosEjecutados.isEmpty()) {
+            Command comando = comandosEjecutados.pop();
+            comando.ejecutar();
         }
-        comandos.clear(); // limpia después de ejecutar
+    }
+    
+    public void deshacerUltimoComando() {
+        if (!comandosEjecutados.isEmpty()) {
+            Command comando = comandosEjecutados.pop();
+            comando.deshacer();
+        }
     }
 }
