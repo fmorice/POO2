@@ -1,0 +1,4 @@
+com\mycompany\sistemagestioninventario\main\SistemaGestionInventario.class
+com\mycompany\sistemagestioninventario\model\Inventario.class
+com\mycompany\sistemagestioninventario\model\Producto.class
+com\mycompany\sistemagestioninventario\main\MenuPrincipal.class
